@@ -39,16 +39,16 @@ int C, S, M;
 
 //setta le distanze da 0 a C-1 di grafo globale
 void setDistance(  ) ;
-void printPath( ofstream&, const vector<int> & ) ;
+void printPath( ofstream&, const vector<int> ) ;
 //return true se il path contiene nodi occupied
 bool isPathOccupied( const vector<int> ) ;
-void printGraph( const vector<nodo> & ) ;
+void printGraph( const vector<nodo> ) ;
 Path minimumCostNonOccupiedPath() ;
 Path minimumCostPath() ;
 Path minimumDistanceNonOccupiedPath() ;
 Path minimunDistancePath() ;
-vector<int> getPath(const vector<int> & , const int  , int  ) ;
-void occupiedPath(vector<nodo> &);
+vector<int> getPath(const vector<int> , const int  , int  ) ;
+void occupiedPath(vector<nodo>);
 
 
 int main() {
@@ -309,7 +309,7 @@ void setDistance(  )  {
     }
 }
 
-void occupiedPath(vector<nodo> & tmp_grafo)  {
+void occupiedPath(vector<nodo> tmp_grafo)  {
 
     for (int j = 0; j < occupiedNodes.size(); j++) //minimumPathPassingThroughOccupiedNodes mppton : occupiedNodes
     {
@@ -363,7 +363,7 @@ bool isPathOccupied( const vector<int> path ) {
 }
 
 //dato un vettore di parent, costruisce il path
-vector<int> getPath(const vector<int> & localParent, const int start , int stop ) {
+vector<int> getPath(const vector<int> localParent, const int start , int stop ) {
     vector<int> path;
     stack<int> s;
     do {
@@ -377,7 +377,7 @@ vector<int> getPath(const vector<int> & localParent, const int start , int stop 
     return path;
 }
 
-void printPath( ofstream &output, const vector<int> & path ) {
+void printPath( ofstream &output, const vector<int> path ) {
     for ( int i = 0; i < path.size(); i++ ) {
         //cout << path[i] << " " ;
         output << path[i] << " " ;
@@ -385,7 +385,7 @@ void printPath( ofstream &output, const vector<int> & path ) {
 }
 
 //GB stampa il nodo, se è occupato un asterisco, e tutti i vicini con il costo
-void printGraph( const vector<nodo> & grafo ) {
+void printGraph( const vector<nodo> grafo ) {
     for ( int i = 0; i < grafo.size() ; i++ ) {
         cout << "i: " << i ;
         if ( grafo[i].occupied ) {
