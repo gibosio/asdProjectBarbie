@@ -94,7 +94,7 @@ int main() {
             occupiedNodes.push_back(nodeToAdd);
         }
         
-        printGraph( grafo ) ;
+        //printGraph( grafo ) ;
 
         if ( isPathOccupied(minPath) ) { //caso in cui non abbiamo trovato un cammino minimo non occupato
             output << "-2" << endl;
@@ -125,9 +125,6 @@ int main() {
             printPath( output, minPath ) ;
         }
     }
-
-
-
     return 0;
 }
 Path minimunDistancePath() {
@@ -238,7 +235,6 @@ Path minimumCostPath() {
     returnPath.isOccupied = isPathOccupied( path ) ;
     return returnPath;
 }
-
 Path minimumCostNonOccupiedPath() {
     vector<int> localParent;
     localParent.resize(C) ;
@@ -281,10 +277,6 @@ Path minimumCostNonOccupiedPath() {
     }
 }
 
-
-
-
-
 void setDistance(  )  {
     queue<int> q;
     q.push(0) ;
@@ -309,45 +301,62 @@ void setDistance(  )  {
     }
 }
 
-void occupiedPath(vector<nodo> & tmp_grafo)  {
+bool isANeighbour( vector<int> & neighbours, int x ) {
+    for ( int i : neighbours ) {
+        if ( i == x ) {
+            return true;
+        }
+    }
+    return false;
+}
 
-    for (int j = 0; j < occupiedNodes.size(); j++) //minimumPathPassingThroughOccupiedNodes mppton : occupiedNodes
+void occupiedPath(vector<nodo> & tmp_grafo)  {
+    vector<int> neighboursOf0;
+
+    //controlla i nodi adiacenti a 0 funziona solo con cammini disgiunti
+    for( link l : grafo[0].vic ) {
+        neighboursOf0.push_back( l.nodoTo ) ;
+    }
+
+    for (int j = 0; j < occupiedNodes.size(); j++) 
+    //minimumPathPassingThroughOccupiedNodes mppton : occupiedNodes
     {
         int i = occupiedNodes[j].indiceNodo;
-        queue<int> q;
-        q.push(C-1) ;
-        
+        if ( isANeighbour( neighboursOf0, i ) ) {
+            queue<int> q;
+            q.push(C-1) ;
+            
 
-        vector<int> distances(C,-1);
-        vector<int> costs(C,0);
-        distances[C-1] = 0;
-        costs[C-1] = 0;
+            vector<int> distances(C,-1);
+            vector<int> costs(C,0);
+            distances[C-1] = 0;
+            costs[C-1] = 0;
 
-        while ( !q.empty() ) {
-            int nodoAtt = q.front();
-            q.pop();
-            for( link linkVic : tmp_grafo[nodoAtt].vic ) {
+            while ( !q.empty() ) {
+                int nodoAtt = q.front();
+                q.pop();
+                for( link linkVic : tmp_grafo[nodoAtt].vic ) {
 
-                
-                int nodoVic = linkVic.nodoTo;
-                int costo = linkVic.costo;
-                if ( (distances[nodoVic] == -1 ||
-                    costs[nodoVic] > costs[nodoAtt] + costo) &&
-                    nodoVic != 0
-                    ) {
-                    distances[nodoVic] = distances[nodoAtt] + 1;
-                    costs[nodoVic] = costs[nodoAtt] + costo;
                     
-                    //if(nodoVic == i) break;
+                    int nodoVic = linkVic.nodoTo;
+                    int costo = linkVic.costo;
+                    if ( (distances[nodoVic] == -1 ||
+                        costs[nodoVic] > costs[nodoAtt] + costo) &&
+                        nodoVic != 0
+                        ) {
+                        distances[nodoVic] = distances[nodoAtt] + 1;
+                        costs[nodoVic] = costs[nodoAtt] + costo;
+                        
+                        //if(nodoVic == i) break;
 
-                    q.push(nodoVic) ;
+                        q.push(nodoVic) ;
+                    }
                 }
             }
+            occupiedNodes[j].costoOccupiedPath = costs[i] + grafo[i].costDistance;
+            occupiedNodes[j].lenghtOccupiedPath = distances[i] + grafo[i].linkDistance;
         }
-        occupiedNodes[j].costoOccupiedPath = costs[i] + grafo[i].costDistance;
-        occupiedNodes[j].lenghtOccupiedPath = distances[i] + grafo[i].linkDistance;
-
-    }    
+    }
 }
 
 
@@ -370,6 +379,7 @@ vector<int> getPath(const vector<int> & localParent, const int start , int stop 
         s.push( stop ) ;
         stop = localParent[stop] ;
     } while ( stop != start ) ;
+    s.push(stop) ;
     while ( !s.empty() ) {
         path.push_back(s.top()) ;
         s.pop();
